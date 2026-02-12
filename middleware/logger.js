@@ -7,6 +7,7 @@ const requestLogger = (req, res, next) => {
     console.log(`${req.method} ${req.url} -> ${res.statusCode} (${duration}ms)`);
   });
 
+  next(); // This was missing!
 };
 
 module.exports = requestLogger;
