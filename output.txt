@@ -1,0 +1,14 @@
+Run the test commands in PowerShell (replace <YOUR_EMAIL@example.com> with your actual email, and fill in placeholders from previous responses/logs). Run each command and copy the output.
+Login:
+Invoke-WebRequest -Uri "http://localhost:3000/auth/login" -Method POST -ContentType "application/json" -Body '{"email":"<YOUR_EMAIL@example.com>","password":"password123"}' | Select-Object -ExpandProperty Content
+Output: JSON with loginSessionId. Check server logs for OTP (e.g., [OTP] Session abc12345: 123456 generated).
+Verify OTP (replace <loginSessionId> and <otp>):
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+Invoke-WebRequest -Uri "http://localhost:3000/auth/verify-otp" -Method POST -ContentType "application/json" -Body '{"loginSessionId":"<loginSessionId>","otp":"<otp>"}' -WebSession $session | Select-Object -ExpandProperty Content
+Output: JSON with "OTP verified".
+Get Token:
+Invoke-WebRequest -Uri "http://localhost:3000/auth/token" -Method POST -WebSession $session | Select-Object -ExpandProperty Content
+Output: JSON with access_token.
+Access Protected (replace <jwt>):
+Invoke-WebRequest -Uri "http://localhost:3000/protected" -Method GET -Headers @{"Authorization" = "Bearer <jwt>"} | Select-Object -ExpandProperty Content
+Output: JSON with success_flag.
